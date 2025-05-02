@@ -90,12 +90,57 @@ def maincode(Nx,Ny):
     SOR(T_final, best_omega, beta, max_iter, tolerance)
     print(f"Nx={Nx},Ny={Ny},Best ω = {best_omega}, iterations = {results[best_omega]}")
     draw(Lx,Ly,Nx,Ny,T_final,best_omega)
-#调用
-for i in range(1, 5):
-    Nx=15*i
-    Ny=12*i
-    maincode(Nx,Ny) # 网格划分
 
+    w_list, iter_list = zip(*sorted(results.items()))
+
+    plt.figure(figsize=(8, 4))
+    plt.plot(w_list, iter_list, marker='o', markersize=3, label='SOR 迭代次数')
+    plt.axvline(1.90752, color='red', linestyle='--', label='最优 ω ≈ 1.9075')
+    plt.xlabel("松弛因子 ω")
+    plt.ylabel("迭代次数")
+    plt.title("SOR收敛速度随松弛因子的变化")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+    return best_omega
+#调用
+#修改网格划分
+
+grid_sizes = []
+omega_values = []
+for i in range(1,2):
+    Nx=75
+    Ny=60
+    omega=maincode(Nx,Ny) # 网格划分
+    total_grid = Nx * Ny
+    grid_sizes.append(total_grid)
+    omega_values.append(omega)
+
+
+# 设置支持中文的字体（需根据系统实际字体名称调整）
+plt.rcParams['font.sans-serif'] = ['SimHei']  # Windows 系统黑体
+# 解决负号显示问题
+plt.rcParams['axes.unicode_minus'] = False
+plt.figure(figsize=(8, 5), dpi=100)
+plt.plot(grid_sizes, omega_values, 
+         marker='o', 
+         markersize=8,
+         linestyle='--',
+         color='#2c7bb6',
+         linewidth=2,
+         markerfacecolor='#d7191c',
+         markeredgecolor='black')
+
+# 图表装饰
+plt.title("Ω 值与网格规模的关系", fontsize=14, pad=20)
+plt.xlabel("总网格数 (Nx × Ny)", fontsize=12)
+plt.ylabel("Ω 值", fontsize=12)
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.tight_layout()
+
+# 显示图表
+plt.show()
 '''
 # --- Plotting 3D Surface ---
 fig = plt.figure(figsize=(10, 7))
