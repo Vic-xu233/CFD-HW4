@@ -92,6 +92,10 @@ def maincode(Nx,Ny):
     draw(Lx,Ly,Nx,Ny,T_final,best_omega)
 
     w_list, iter_list = zip(*sorted(results.items()))
+    # 设置支持中文的字体（需根据系统实际字体名称调整）
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # Windows 系统黑体
+# 解决负号显示问题
+    plt.rcParams['axes.unicode_minus'] = False
 
     plt.figure(figsize=(8, 4))
     plt.plot(w_list, iter_list, marker='o', markersize=3, label='SOR 迭代次数')
@@ -109,9 +113,9 @@ def maincode(Nx,Ny):
 
 grid_sizes = []
 omega_values = []
-for i in range(1,2):
-    Nx=75
-    Ny=60
+for i in range(3,20):
+    Nx=5*i
+    Ny=4*i
     omega=maincode(Nx,Ny) # 网格划分
     total_grid = Nx * Ny
     grid_sizes.append(total_grid)
