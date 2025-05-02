@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from mpl_toolkits.mplot3d import Axes3D
+from datetime import datetime
 
 # SOR迭代
 def SOR(T, omega, beta, max_iter, tolerance):
@@ -71,7 +72,7 @@ def maincode(Nx,Ny):
     step=0.2
     omega_values = np.arange(left,right,step) 
     min_iterations_old = max_iter
-    for _ in tqdm(range(5)):
+    for _ in tqdm(range(5)):#当网格细分超过5次时，ω不再变化，直接取最优值，不再提高精度
       w_best=find_best_omega(omega_values, T, beta, max_iter, tolerance, results)
       min_iterations = results[w_best]
       if abs(min_iterations_old - min_iterations) < 2:
@@ -89,12 +90,13 @@ def maincode(Nx,Ny):
     T_final = T.copy()
     SOR(T_final, best_omega, beta, max_iter, tolerance)
     print(f"Nx={Nx},Ny={Ny},Best ω = {best_omega}, iterations = {results[best_omega]}")
-    draw(Lx,Ly,Nx,Ny,T_final,best_omega)
+    #draw(Lx,Ly,Nx,Ny,T_final,best_omega)
 
     w_list, iter_list = zip(*sorted(results.items()))
+
     # 设置支持中文的字体（需根据系统实际字体名称调整）
     plt.rcParams['font.sans-serif'] = ['SimHei']  # Windows 系统黑体
-# 解决负号显示问题
+     # 解决负号显示问题
     plt.rcParams['axes.unicode_minus'] = False
 
     plt.figure(figsize=(8, 4))
@@ -106,16 +108,24 @@ def maincode(Nx,Ny):
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    #plt.show()
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    ##filename = f"SOR_omega_plot_{timestamp}.png"  ##需要保存时在运行
+
+    # 保存图片（确保当前目录有写权限，或设置为其他路径）
+    #plt.savefig(filename, dpi=300)
+    #print(f"图像已保存为 {filename}")
+
+    plt.close()
     return best_omega
 #调用
 #修改网格划分
 
 grid_sizes = []
 omega_values = []
-for i in range(3,20):
-    Nx=5*i
-    Ny=4*i
+for i in range(3,10):
+    Nx=5*i+1
+    Ny=6*i-1
     omega=maincode(Nx,Ny) # 网格划分
     total_grid = Nx * Ny
     grid_sizes.append(total_grid)
