@@ -45,11 +45,20 @@ def SOR(T, omega, beta, max_iter, tolerance):
            print(f"经过{iteration+1} 次迭代收敛，松弛因子 ω = {omega}")
            break
     else:
+        iteration =max_iter
         print("超过最大次数")
-    return T
+    return T,iteration+1
 
-T=SOR(T, omega, beta, max_iter, tolerance)
+omega_values = np.arange(1.8, 2.0, 0.05) 
+results = {}
+T_best = {}
 
+for omega in omega_values:
+  T_best[omega],results[omega]=SOR(T, omega, beta, max_iter, tolerance)
+
+best_omega = min(results, key=results.get)
+T = T_best[best_omega]
+print(f"Best ω = {best_omega}, iterations = {results[best_omega]}")
 
 # 可视化
 x = np.linspace(0, Lx, Nx)
@@ -57,7 +66,7 @@ y = np.linspace(0, Ly, Ny)
 X, Y = np.meshgrid(x, y, indexing='ij')
 
 plt.figure(figsize=(8, 5))
-cp = plt.contourf(X, Y, T, 20, cmap='hot')
+cp = plt.contourf(X, Y, T, 50, cmap='hot')
 plt.colorbar(cp, label='Temperature (°C)')
 plt.title(f"2D Heat Conduction (SOR, ω = {omega})")
 plt.xlabel("x (cm)")
